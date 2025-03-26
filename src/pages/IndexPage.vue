@@ -1,55 +1,52 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <example-component
-      title="Example component"
-      active
-      :todos="todos"
-      :meta="meta"
-    ></example-component>
+    <div class="posts-container">
+      <q-input class="q-mb-md" filled color="primary" label="Поиск" v-model="search"
+        ><template v-slot:prepend>
+          <q-icon name="search" />
+        </template>
+      </q-input>
+      <q-virtual-scroll style="height: 80vh" :items="searchedPosts" separator v-slot="{ item }">
+        <post-card class="q-my-sm" :key="item.id" :post="item" @update="fetchPosts" />
+      </q-virtual-scroll>
+    </div>
+    <!-- <div class="posts-container">
+      <template v-for="(post, i) in posts">
+        <post-card v-if="posts[i]" :key="post.id" v-model="posts[i]" @update="fetchPosts" />
+      </template>
+    </div> -->
+    <!-- <div class="posts-actions"></div> -->
   </q-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import type { Todo, Meta } from 'components/models';
-import ExampleComponent from 'components/ExampleComponent.vue';
+<script lang="ts" setup>
+import { computed, onMounted, ref } from 'vue';
+import PostCard from '../components/PostCard.vue';
+import { getPosts } from '../api/services/posts-service';
+import type { TorrentPost } from '../api/services/types';
 
-export default defineComponent({
-  name: 'IndexPage',
+const posts = ref<TorrentPost[]>([]);
+const search = ref('');
 
-  components: {
-    ExampleComponent
-  },
-
-  setup () {
-    const todos = ref<Todo[]>([
-      {
-        id: 1,
-        content: 'ct1'
-      },
-      {
-        id: 2,
-        content: 'ct2'
-      },
-      {
-        id: 3,
-        content: 'ct3'
-      },
-      {
-        id: 4,
-        content: 'ct4'
-      },
-      {
-        id: 5,
-        content: 'ct5'
-      }
-    ]);
-
-    const meta = ref<Meta>({
-      totalCount: 1200
-    });
-
-    return { todos, meta };
-  }
+const searchedPosts = computed<TorrentPost[]>(() => {
+  if (!search.value) return posts.value;
+  return posts.value.filter(
+    ({ seeds, leaches, title, size }) =>
+      String(seeds).includes(search.value) ||
+      String(leaches).includes(search.value) ||
+      title.includes(search.value) ||
+      size.includes(search.value),
+  );
 });
+
+async function fetchPosts() {
+  posts.value = await getPosts();
+}
+
+onMounted(fetchPosts);
 </script>
+<style scoped lang="scss">
+.posts-container {
+  min-width: 415px;
+}
+</style>
