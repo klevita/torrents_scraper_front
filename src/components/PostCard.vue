@@ -66,12 +66,7 @@ async function deleteData() {
 }
 
 function redirectToUrl() {
-  const a = document.createElement('a');
-  a.href = props.post.link;
-  a.target = '_blank';
-  document.appendChild(a);
-  a.click();
-  document.removeChild(a);
+  window.open(props.post.link, '_blank')?.focus();
 }
 </script>
 <style scoped lang="scss">
