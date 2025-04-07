@@ -19,3 +19,9 @@ export async function updatePost(post: TorrentPost): Promise<TorrentPost> {
 
   return resp.data;
 }
+
+export async function createPost(post: Omit<TorrentPost, 'id'>): Promise<TorrentPost> {
+  const resp = await coreHTTPClient.post('posts/', post);
+
+  return resp.data;
+}
