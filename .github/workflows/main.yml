@@ -76,3 +76,20 @@ jobs:
           klevita/scraper-front:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SERVER_HOST }}        # e.g., 192.168.1.100
+        username: ${{ secrets.SERVER_USERNAME }} # e.g., ubuntu, ec2-user
+        key: ${{ secrets.SERVER_SSH_KEY }}       # Your PRIVATE SSH key
+        script: |
+          cd prj
+          kubectl apply -f prj-app.yaml
+          kubectl rollout status deployment/your-deployment-name
