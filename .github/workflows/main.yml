@@ -91,6 +91,6 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}       # Your PRIVATE SSH key
         script: |
           cd prj
-          kubectl apply -f prj-app.yaml
+          kubectl rollout restart deployment/demo
           kubectl rollout status deployment/frontend -n prj
           kubectl get pods
