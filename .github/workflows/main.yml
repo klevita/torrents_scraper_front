@@ -82,7 +82,7 @@ jobs:
         run: |
           sonar-scanner \
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} \
-            -Dsonar.sources=app \
+            -Dsonar.sources=src \
             -Dsonar.tests=test \
             -Dsonar.python.coverage.reportPaths=coverage.xml \
             -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
