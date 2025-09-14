@@ -9,6 +9,7 @@
       <div class="color-green-12">{{ post.size }}</div>
     </div>
     <div class="row justify-end">
+      <q-btn flat round color="primary" icon="mail_outline" @click="pushToTG" />
       <q-btn flat round color="primary" icon="subdirectory_arrow_right" @click="redirectToUrl" />
       <q-btn flat round color="warning" icon="edit" @click="switchMode('edit')" />
       <q-btn flat round color="negative" icon="delete_outline" @click="deleteData()" />
@@ -28,7 +29,7 @@
 </template>
 <script setup lang="ts">
 import { QBtn, QInput, QCard } from 'quasar';
-import { deletePost, updatePost } from '../api/services/posts-service';
+import { deletePost, updatePost, pushPostToTelegram } from '../api/services/posts-service';
 import { ref } from 'vue';
 import type { TorrentPost } from '../api/services/types';
 import { makeEmptyTorrentPost } from '../api/services/types';
@@ -55,6 +56,13 @@ async function updateData() {
   if (resp) {
     emit('update');
     switchMode('view');
+  }
+}
+
+async function pushToTG() {
+  const resp = await pushPostToTelegram(props.post.id);
+  if (resp) {
+    emit('update');
   }
 }
 

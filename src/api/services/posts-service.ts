@@ -25,3 +25,9 @@ export async function createPost(post: Omit<TorrentPost, 'id'>): Promise<Torrent
 
   return resp.data;
 }
+
+export async function pushPostToTelegram(postId: TorrentPost['id']): Promise<{status: string}> {
+  const resp = await coreHTTPClient.post(`send-post/${postId}`);
+
+  return resp.data;
+}

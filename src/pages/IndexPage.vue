@@ -34,14 +34,18 @@ const posts = ref<TorrentPost[]>([]);
 const search = ref('');
 
 const searchedPosts = computed<TorrentPost[]>(() => {
-  if (!search.value) return posts.value;
-  return posts.value.filter(
-    ({ seeds, leaches, title, size }) =>
-      String(seeds).includes(search.value) ||
-      String(leaches).includes(search.value) ||
-      title.includes(search.value) ||
-      size.includes(search.value),
-  );
+  const searchTerm = search.value?.toLowerCase() || '';
+  
+  if (!searchTerm) return posts.value;
+  
+  return posts.value.filter(({ seeds, leaches, title, size }) => {
+    return (
+      String(seeds ?? '').toLowerCase().includes(searchTerm) ||
+      String(leaches ?? '').toLowerCase().includes(searchTerm) ||
+      title?.toLowerCase().includes(searchTerm) ||
+      size?.toLowerCase().includes(searchTerm)
+    );
+  });
 });
 
 async function fetchPosts() {

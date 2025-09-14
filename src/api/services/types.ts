@@ -1,3 +1,5 @@
+import { uuid } from 'lodash-uuid';
+
 export interface TorrentPost {
   id: number;
   rutracker_id: string;
@@ -10,7 +12,7 @@ export interface TorrentPost {
 
 export const makeEmptyTorrentPost: () => TorrentPost = () => ({
   id: 0,
-  rutracker_id: '',
+  rutracker_id: uuid(),
   link: '',
   title: '',
   seeds: 0,
