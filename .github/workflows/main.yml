@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ "develop" ]
 
+env:
+  SONAR_HOST_URL: "http://188.225.42.100:9000"
+  SONAR_PROJECT_KEY: "DevOpsLab4"
+
 jobs:
   build:
 
@@ -31,27 +35,63 @@ jobs:
     
   test:
     runs-on: ubuntu-latest
-    
+    needs: build
+
     permissions:
-      # Required to checkout the code
       contents: read
-      # Required to put a comment into the pull-request
-      pull-requests: write
 
     steps:
-    - uses: actions/checkout@v4
-    - name: 'Install Node'
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-    - name: 'Install Deps'
-      run: npm install
-    - name: 'Test'
-      run: npx vitest run --coverage
+      - uses: actions/checkout@v4
+
+      - name: 'Install Node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: 'Install Deps'
+        run: npm install
+
+      - name: 'Run tests with coverage'
+        run: npx vitest run --coverage --coverage.reporter=lcov
+
+      - name: 'Upload coverage'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+
+  sonar:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Download coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+
+      - name: Install SonarScanner
+        run: |
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip sonar-scanner.zip -d $HOME
+          echo "$HOME/sonar-scanner-5.0.1.3006-linux/bin" >> $GITHUB_PATH
+
+      - name: Run SonarQube analysis
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} \
+            -Dsonar.sources=app \
+            -Dsonar.tests=tests \
+            -Dsonar.python.coverage.reportPaths=coverage.xml \
+            -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.qualitygate.wait=true
       
   docker-build-push:
     runs-on: ubuntu-latest
-    needs: [build, test]  # Wait for build and test to complete successfully
+    needs: sonar  # Wait for build and test to complete successfully
     # Only run on push to develop (not on pull requests)
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     
