@@ -92,4 +92,5 @@ jobs:
         script: |
           cd prj
           kubectl apply -f prj-app.yaml
-          kubectl rollout status deployment/your-deployment-name
+          kubectl rollout status deployment/frontend -n prj
+          kubectl get pods
