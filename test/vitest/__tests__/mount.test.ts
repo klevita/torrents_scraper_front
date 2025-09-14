@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import IndexPage from '../../../src/pages/IndexPage.vue';
 import PostCard from '../../../src/components/PostCard.vue';
+import ErrorNotFound from '../../../src/pages/ErrorNotFound.vue';
 
 installQuasarPlugin();
 
@@ -23,8 +24,7 @@ const mockedPost = {
 describe('components', () => {
   it('IndexPage mounts', () => {
     const wrapper = mount(IndexPage);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    expect(wrapper.exists()).to.be.true;
+    expect(wrapper.exists()).toBe(true);
   });
   it('PostCard mounts', () => {
     const wrapper = mount(PostCard, {
@@ -33,7 +33,11 @@ describe('components', () => {
       },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    expect(wrapper.exists()).to.be.true;
+    expect(wrapper.exists()).toBe(true);
+  });
+  it('ErrorNotFound mounts', () => {
+    const wrapper = mount(ErrorNotFound);
+
+    expect(wrapper.exists()).toBe(true);
   });
 });
