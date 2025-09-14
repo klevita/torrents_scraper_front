@@ -325,7 +325,8 @@ describe('IndexPage', () => {
 
       await wrapper.vm.addItem();
 
-      const createPostArgs = (createPost as Mock).mock.calls[0][0];
+      const createPostArgs = (createPost as Mock).mock.calls[0]?.[0];
+      expect(createPostArgs).toBeDefined();
       expect(createPostArgs).not.toHaveProperty('id');
     });
 
@@ -343,7 +344,8 @@ describe('IndexPage', () => {
 
       await wrapper.vm.addItem();
 
-      const createPostArgs = (createPost as Mock).mock.calls[0][0];
+      const createPostArgs = (createPost as Mock).mock.calls[0]?.[0];
+      expect(createPostArgs).toBeDefined();
       expect(createPostArgs.title).toBe('Новый пост');
     });
   });

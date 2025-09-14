@@ -3,9 +3,16 @@ import { getPosts, deletePost, updatePost, createPost, pushPostToTelegram } from
 import { coreHTTPClient } from '../../../src/api/clients/core-http-client';
 import type { TorrentPost } from '../../../src/api/services/types';
 
-vi.mock('../../../src/api/clients/core-http-client');
+vi.mock('../../../src/api/clients/core-http-client', () => ({
+  coreHTTPClient: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
 
-const mockedClient = vi.mocked(coreHTTPClient);
+const mockedClient = coreHTTPClient as any;
 
 const mockPost: TorrentPost = {
   id: 1,
@@ -132,7 +139,7 @@ describe('posts-service', () => {
 
       await updatePost(mockPost);
 
-      const [, requestBody] = mockedClient.put.mock.calls[0];
+      const [, requestBody] = mockedClient.put.mock.calls[0] || [];
       expect(requestBody).not.toHaveProperty('id');
       expect(Object.keys(requestBody)).toEqual([
         'rutracker_id',
