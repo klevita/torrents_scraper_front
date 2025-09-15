@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import IndexPage from '../../../src/pages/IndexPage.vue';
 import PostCard from '../../../src/components/PostCard.vue';
 import ErrorNotFound from '../../../src/pages/ErrorNotFound.vue';
-import MainLayout from '../../../src/components/MainLayout.vue';
+import MainLayout from '../../../src/layouts/MainLayout.vue';
 
 installQuasarPlugin();
 
