@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import IndexPage from '../../../src/pages/IndexPage.vue';
 import PostCard from '../../../src/components/PostCard.vue';
 import ErrorNotFound from '../../../src/pages/ErrorNotFound.vue';
+import MainLayout from '../../../src/components/MainLayout.vue';
 
 installQuasarPlugin();
 
@@ -24,6 +25,10 @@ const mockedPost = {
 describe('components', () => {
   it('IndexPage mounts', () => {
     const wrapper = mount(IndexPage);
+    expect(wrapper.exists()).toBe(true);
+  });
+  it('MainLayout mounts', () => {
+    const wrapper = mount(MainLayout);
     expect(wrapper.exists()).toBe(true);
   });
   it('PostCard mounts', () => {
